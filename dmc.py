@@ -196,9 +196,9 @@ def make(name, frame_stack, action_repeat, seed):
         env = manipulation.load(name, seed=seed)
         pixels_key = 'front_close'
     # add wrappers
-    env = ActionDTypeWrapper(env, np.float32)
     env = ActionRepeatWrapper(env, action_repeat)
     env = action_scale.Wrapper(env, minimum=-1.0, maximum=+1.0)
+    env = ActionDTypeWrapper(env, np.float32)
     # add renderings for clasical tasks
     if (domain, task) in suite.ALL_TASKS:
         # zoom in camera for quadruped
