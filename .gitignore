@@ -10,3 +10,8 @@ exp_drqv2_*.py
 dmc_benchmarks.py
 check_sweep.py
 cancel_sweep.py
+
+eval_video
+tb
+eval.csv
+train.csv
