@@ -204,7 +204,7 @@ class Workspace:
             self.__dict__[k] = v
 
 
-@hydra.main(config_path='cfgs', config_name='config')
+@hydra.main(config_path='cfgs', config_name='config', version_base="1.3")
 def main(cfg):
     from train import Workspace as W
     root_dir = Path.cwd()
