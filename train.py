@@ -34,7 +34,9 @@ def make_agent(obs_spec, action_spec, cfg):
 class Workspace:
     def __init__(self, cfg):
         self.work_dir = Path.cwd()
-        self.run_dir = Path(cfg.output_dir)
+        self.run_dir = Path(
+          hydra.core.hydra_config.HydraConfig.get().runtime.output_dir
+        )
         print(f'workspace: {self.work_dir}')
         print(f'run dir: {self.run_dir}')
 

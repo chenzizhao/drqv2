@@ -1,6 +1,6 @@
 defaults:
   - _self_
-  - task@_global_: quadruped_walk
+  - task@_global_: knot
   - override hydra/launcher: submitit_local
 
 # task settings
@@ -32,7 +32,6 @@ wandb:
   project: knots-dev-drqv2
   entity: zc478
   name: ${_maybe_slurm}
-output_dir: ${hydra:run.dir}
 # experiment
 experiment: exp
 # agent
@@ -56,17 +55,27 @@ agent:
   stddev_schedule: ${stddev_schedule}
   stddev_clip: 0.3
 
+# python train.py -m hydra/launcher=submitit_slurm ++hydra.launcher.srun_args="['--cpu-bind=none']"
 hydra:
   run:
     dir: ./exp_local/${_maybe_slurm}_${now:%Y-%m-%d-%H-%M-%S-%f}_${hydra.job.override_dirname}
+  sweeper:
+    params:
+      task_name: knot_unknot,knot_tie_unknot,knot_eq1
+      task_kwargs.task_max_n_crossings: 2,3,4
   sweep:
-    dir: ./exp/${now:%Y.%m.%d}/${now:%H%M}_${agent_cfg.experiment}
+    dir: ./exp/${_maybe_slurm}_${now:%Y-%m-%d-%H-%M-%S}
     subdir: ${hydra.job.num}
   launcher:
-    timeout_min: 4300
-    cpus_per_task: 10
+    timeout_min: 2880
+    # srun_args: ["--cpu-bind=none"] # TODO: move from cli to file
+    cpus_per_task: 4 # 10
     gpus_per_node: 1
+    partition: lil-gpuhi
     tasks_per_node: 1
-    mem_gb: 160
+    mem_gb: 32 # 160
     nodes: 1
-    submitit_folder: ./exp/${now:%Y.%m.%d}/${now:%H%M%S}_${agent_cfg.experiment}/.slurm
+    # submitit_folder: ./exp/${now:%Y.%m.%d}/${now:%H%M%S}_${agent_cfg.experiment}/.slurm
+    submitit_folder: ./exp/${_maybe_slurm}_${now:%Y-%m-%d-%H-%M-%S}/.slurm
+    additional_parameters:
+      wckey: ''

@@ -4,7 +4,6 @@ defaults:
 
 task_name: ???
 action_repeat: 1 # frame_skip is pack in
-frame_stack: 1 # TODO: fix shape
 task_kwargs:
   task_max_n_crossings: 2
   task_max_n_states: 20

@@ -5,6 +5,7 @@
 import csv
 import datetime
 from collections import defaultdict
+from omegaconf import OmegaConf
 
 import numpy as np
 import torch
@@ -129,30 +130,35 @@ class Logger(object):
                                      formating=COMMON_TRAIN_FORMAT)
         self._eval_mg = MetersGroup(log_dir / 'eval.csv',
                                     formating=COMMON_EVAL_FORMAT)
+        self._sw = None
+        self._wandb = None
         if use_tb:
             self._sw = SummaryWriter(str(log_dir / 'tb'))
-        else:
-            self._sw = None
         if use_wandb:
             assert cfg and use_wandb
             import wandb
-            wandb.tensorboard.patch(root_logdir=str(log_dir / 'tb'))
             self._wandb = wandb
             self._wandb.init(
-                project=cfg.wandb.project,
-                entity=cfg.wandb.entity,
-                name=cfg.wandb.name,
-                config=cfg)
+              project=cfg.wandb.project,
+              entity=cfg.wandb.entity,
+              name=cfg.wandb.name,
+              config=OmegaConf.to_container(cfg, resolve=True),
+            )
 
     def _try_sw_log(self, key, value, step):
         if self._sw is not None:
             self._sw.add_scalar(key, value, step)
+
+    def _try_wandb_log(self, key, value, step):
+        if self._wandb is not None:
+            self._wandb.log({key: value}, step=step)
 
     def log(self, key, value, step):
         assert key.startswith('train') or key.startswith('eval')
         if type(value) == torch.Tensor:
             value = value.item()
         self._try_sw_log(key, value, step)
+        self._try_wandb_log(key, value, step)
         mg = self._train_mg if key.startswith('train') else self._eval_mg
         mg.log(key, value)
 
