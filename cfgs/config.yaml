@@ -31,6 +31,8 @@ experiment: exp
 lr: 1e-4
 feature_dim: 50
 
+task_kwargs: ???
+
 agent:
   _target_: drqv2.DrQV2Agent
   obs_shape: ??? # to be specified later

@@ -15,3 +15,4 @@ eval_video
 tb
 eval.csv
 train.csv
+buffer/

@@ -6,6 +6,7 @@ from collections import deque
 from typing import Any, NamedTuple
 
 import dm_env
+import dmc_knot
 import numpy as np
 from dm_control import manipulation, suite
 from dm_control.suite.wrappers import action_scale, pixels
@@ -180,7 +181,7 @@ class ExtendedTimeStepWrapper(dm_env.Environment):
         return getattr(self._env, name)
 
 
-def make(name, frame_stack, action_repeat, seed):
+def make(name, frame_stack, action_repeat, seed, task_kwargs):
     domain, task = name.split('_', 1)
     # overwrite cup to ball_in_cup
     domain = dict(cup='ball_in_cup').get(domain, domain)
@@ -190,6 +191,9 @@ def make(name, frame_stack, action_repeat, seed):
                          task,
                          task_kwargs={'random': seed},
                          visualize_reward=False)
+        pixels_key = 'pixels'
+    elif domain == "knot":
+        env = dmc_knot.load(name, seed=seed, **task_kwargs)
         pixels_key = 'pixels'
     else:
         name = f'{domain}_{task}_vision'

@@ -103,6 +103,8 @@ class ReplayBuffer(IterableDataset):
         except:
             return False
         eps_len = episode_len(episode)
+        if eps_len < self._nstep + 1:  # store long episode
+            return False
         while eps_len + self._size > self._max_size:
             early_eps_fn = self._episode_fns.pop(0)
             early_eps = self._episodes.pop(early_eps_fn)

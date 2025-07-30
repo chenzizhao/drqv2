@@ -1,0 +1,16 @@
+defaults:
+  - medium
+  - _self_
+
+task_name: ???
+action_repeat: 1 # frame_skip is pack in
+frame_stack: 1 # TODO: fix shape
+task_kwargs:
+  task_max_n_crossings: 2
+  task_max_n_states: 20
+  split: tr
+  height: 128
+  width: 128
+  duration: 50
+  output_pixels: true
+  r_gc_allow_flipped_or_mirrored: true
