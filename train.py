@@ -4,7 +4,8 @@
 # LICENSE file in the root directory of this source tree.
 import warnings
 warnings.filterwarnings('ignore', category=DeprecationWarning)
-
+import traceback
+import sys
 import os
 os.environ['MKL_SERVICE_FORCE_INTEL'] = '1'
 os.environ['MUJOCO_GL'] = 'egl'
@@ -210,9 +211,7 @@ class Workspace:
         for k, v in payload.items():
             self.__dict__[k] = v
 
-
-@hydra.main(config_path='cfgs', config_name='config', version_base="1.3")
-def main(cfg):
+def run(cfg):
     from train import Workspace as W
     root_dir = Path.cwd()
     workspace = W(cfg)
@@ -222,6 +221,14 @@ def main(cfg):
         workspace.load_snapshot()
     workspace.train()
 
+
+@hydra.main(config_path='cfgs', config_name='config', version_base="1.3")
+def main(cfg):
+    try:
+        run(cfg)
+    except Exception:
+        traceback.print_exc(file=sys.stderr)
+        raise
 
 if __name__ == '__main__':
     main()

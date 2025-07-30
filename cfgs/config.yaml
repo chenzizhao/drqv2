@@ -76,6 +76,6 @@ hydra:
     mem_gb: 32 # 160
     nodes: 1
     # submitit_folder: ./exp/${now:%Y.%m.%d}/${now:%H%M%S}_${agent_cfg.experiment}/.slurm
-    submitit_folder: ./exp/${_maybe_slurm}_${now:%Y-%m-%d-%H-%M-%S}/.slurm
+    submitit_folder: ./exp/${_maybe_slurm}_${now:%Y-%m-%d-%H-%M-%S}_submitit/.slurm
     additional_parameters:
       wckey: ''
