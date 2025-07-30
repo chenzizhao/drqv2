@@ -123,7 +123,7 @@ class MetersGroup(object):
 
 
 class Logger(object):
-    def __init__(self, log_dir, use_tb):
+    def __init__(self, log_dir, use_tb, use_wandb, cfg=None):
         self._log_dir = log_dir
         self._train_mg = MetersGroup(log_dir / 'train.csv',
                                      formating=COMMON_TRAIN_FORMAT)
@@ -133,6 +133,16 @@ class Logger(object):
             self._sw = SummaryWriter(str(log_dir / 'tb'))
         else:
             self._sw = None
+        if use_wandb:
+            assert cfg and use_wandb
+            import wandb
+            wandb.tensorboard.patch(root_logdir=str(log_dir / 'tb'))
+            self._wandb = wandb
+            self._wandb.init(
+                project=cfg.wandb.project,
+                entity=cfg.wandb.entity,
+                name=cfg.wandb.name,
+                config=cfg)
 
     def _try_sw_log(self, key, value, step):
         if self._sw is not None:
@@ -158,6 +168,12 @@ class Logger(object):
 
     def log_and_dump_ctx(self, step, ty):
         return LogAndDumpCtx(self, step, ty)
+
+    def __close__(self):
+        if self._sw is not None:
+            self._sw.close()
+        if self._wandb is not None:
+            self._wandb.finish()
 
 
 class LogAndDumpCtx:

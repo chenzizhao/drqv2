@@ -25,6 +25,14 @@ device: cuda
 save_video: true
 save_train_video: false
 use_tb: true
+_maybe_slurm: ${oc.env:SLURM_JOB_ID,local}
+use_wandb: true
+wandb:
+  enabled: ${use_wandb}
+  project: knots-dev-drqv2
+  entity: zc478
+  name: ${_maybe_slurm}
+output_dir: ${hydra:run.dir}
 # experiment
 experiment: exp
 # agent
@@ -50,7 +58,7 @@ agent:
 
 hydra:
   run:
-    dir: ./exp_local/${now:%Y.%m.%d}/${now:%H%M%S}_${hydra.job.override_dirname}
+    dir: ./exp_local/${_maybe_slurm}_${now:%Y-%m-%d-%H-%M-%S-%f}_${hydra.job.override_dirname}
   sweep:
     dir: ./exp/${now:%Y.%m.%d}/${now:%H%M}_${agent_cfg.experiment}
     subdir: ${hydra.job.num}
