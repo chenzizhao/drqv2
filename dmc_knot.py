@@ -78,7 +78,6 @@ class Knot(dm_env.Environment):
   # domain == knot
   def __init__(self, task_name, seed=None, **kwargs):
     # TODO logdir = cfg.work_dir / split / f"{rank:04d}" if rank == 1 else None
-    assert task_name in ("unknot", "tie_unknot", "tie_knot")
     env = gym.make(
       "knotgym/Unknot-v0",
       task=task_name,
